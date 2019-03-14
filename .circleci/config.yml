@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    environment:
+      - GOPATH: /home/circleci/go
+    working_directory: /home/circleci/go/src/github.com/mataku/go-bitrise
+    docker:
+      - image: circleci/golang:1.9
+    steps:
+      - checkout
+      - run: go get ./...
+      - run: go vet ./...
+      # - run: go test -v ./...

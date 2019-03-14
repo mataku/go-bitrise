@@ -11,7 +11,7 @@ const (
 )
 
 type RequestParams struct {
-	HookInfo    HookInfo    `json:"hook_info"`
+	Info        HookInfo    `json:"hook_info"`
 	BuildParams BuildParams `json:"build_params"`
 }
 
@@ -53,14 +53,14 @@ func (c *Client) TriggerBuild(hi *HookInfo, bp BuildParams) (*http.Request, erro
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf(err)
+		return nil, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := checkResponse(c.HttpClient.Do(req))
 	if err != nil {
-		return nil, fmt.Errorf(err)
+		return nil, err
 	}
 
 	return resp, nil

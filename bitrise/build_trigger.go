@@ -2,9 +2,12 @@ package bitrise
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
+)
+
+const (
+	apiEndPoint = "https://app.bitrise.io/app/"
 )
 
 type RequestParams struct {
@@ -32,14 +35,10 @@ type BuildParams struct {
 	Environment   []Environments `json:"environments"`
 }
 
-func TriggerBuild(appSlug string, hi *HookInfo, bp BuildParams) (*http.Request, error) {
+func (c *Client) TriggerBuild(hi *HookInfo, bp BuildParams) (*http.Request, error) {
 	token := hi.BuildTriggerToken
 	if token == "" {
 		return nil, fmt.Errorf("hook_info: Build trigger token required.")
-	}
-
-	if appSlug == "" {
-		return nil, fmt.Errorf("app_slug: App slug required.")
 	}
 
 	requestParams := RequestParams{
@@ -49,19 +48,20 @@ func TriggerBuild(appSlug string, hi *HookInfo, bp BuildParams) (*http.Request, 
 
 	req, err := http.NewRequest(
 		"POST",
-		"https://app.bitrise.io/app/"+appSlug+"/build/start.json",
+		apiEndPoint+client.AppSlug+"/build/start.json",
 		bytes.NewBuffer([]byte(string(requestParams))),
 	)
 
 	if err != nil {
-		fmt.Errorf(err)
+		return nil, fmt.Errorf(err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client()
-	resp, err := checkResponse(client.Do(req))
+	resp, err := checkResponse(c.HttpClient.Do(req))
 	if err != nil {
-		fmt.Errorf(err)
+		return nil, fmt.Errorf(err)
 	}
+
+	return resp, nil
 }

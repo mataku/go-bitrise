@@ -12,9 +12,16 @@ type ErrorMsg struct {
 	Message string `json:"error_msg"`
 }
 
-const (
-	bitriseApiEndpoint = "https://app.bitrise.io/app/"
-)
+type Client struct {
+	AppSlug    string
+	HttpClient *http.Client
+}
+
+func NewClient(appSlug string) *Client {
+	return &Client{
+		AppSlug: appSlug,
+	}
+}
 
 func checkResponse(response *http.Response, err error) (*http.Response, error) {
 	switch response.StatusCode {
@@ -22,7 +29,7 @@ func checkResponse(response *http.Response, err error) (*http.Response, error) {
 		return response, nil
 	default:
 		var reader io.Reader = response.Body
-		reader = io.TeeReader(r, os.Stderr)
+		reader = io.TeeReader(reader, os.Stderr)
 
 		var errorMsg ErrorMsg
 		err = json.NewDecoder(reader).Decode(&errorMsg)

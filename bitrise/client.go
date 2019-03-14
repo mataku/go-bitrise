@@ -14,7 +14,7 @@ type ErrorMsg struct {
 
 type Client struct {
 	AppSlug    string
-	HttpClient *http.Client
+	HttpClient http.Client
 }
 
 func NewClient(appSlug string) *Client {

@@ -34,7 +34,7 @@ func checkResponse(response *http.Response, err error) (*http.Response, error) {
 		var errorMsg ErrorMsg
 		err = json.NewDecoder(reader).Decode(&errorMsg)
 		if err != nil {
-			return nil, fmt.Errorf(err)
+			return nil, err
 		} else {
 			return nil, fmt.Errorf("Status code: %s", response.Status)
 		}
